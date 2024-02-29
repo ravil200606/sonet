@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: 'jdbc:postgresql://localhost:5432/sonet'
+    username: 'developer'
+    password: '212-201-590'
+  hikari:
+    auto-commit: true
+    leak-detection-threshold: 60000
+    allow-pool-suspension: true
+    minimum-idle: 5
+    maximum-pool-size: 10
+    idle-timeout: 60000
+  jackson:
+    date-format: 'yyyy-MM-dd'
+
+
