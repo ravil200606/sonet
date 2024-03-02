@@ -26,5 +26,13 @@ public interface SecurityService {
      * @return Сообщение об успешной регистрации.
      * @throws SonetException в случае ошибки при регистрации.
      */
-    RegisterResponse register(RegisterRequest request) throws SonetException;;
+    RegisterResponse register(RegisterRequest request) throws SonetException;
+
+    /**
+     * Шифрует строку пароля алгоритмом BCRYPT.
+     *
+     * @param password строка пароля.
+     * @return результат хэширования.
+     */
+    String encodePassword(String password);
 }

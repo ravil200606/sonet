@@ -1,0 +1,73 @@
+databaseChangeLog:
+  - preConditions:
+      - runningAs:
+          username:  developer
+  - changeSet:
+      id:  1
+      author:  Ravil.Abdulkhairov
+      changes:
+        - createTable:
+            tableName: SONET_USER
+            columns:
+              - column:
+                  name: ID
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: USER_ID
+                  type: varchar(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: PASSWORD
+                  type: varchar(200)
+  - changeSet:
+      id: 2
+      author: Ravil.Abdulkhairov
+      changes:
+        - createTable:
+            tableName: USER_PROFILE
+            columns:
+              - column:
+                  name: ID
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: SONET_USER_ID
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: FIRST_NAME
+                  type: varchar(50)
+              - column:
+                  name: SECOND_NAME
+                  type: varchar(100)
+              - column:
+                  name: BIRTH_DATE
+                  type: date
+              - column:
+                  name: BIOGRAPHY
+                  type: varchar(1000)
+              - column:
+                  name: CITY
+                  type: varchar(100)
+        - addForeignKeyConstraint:
+            baseColumnNames: SONET_USER_ID
+            baseTableName: USER_PROFILE
+            baseTableSchemaName: public
+            constraintName: fk_profile_user_id
+            deferrable: true
+            initiallyDeferred: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+            referencedColumnNames: ID
+            referencedTableName: SONET_USER
+            referencedTableSchemaName: public
+            validate: true

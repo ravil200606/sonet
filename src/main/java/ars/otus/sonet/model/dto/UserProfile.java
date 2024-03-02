@@ -21,7 +21,7 @@ public class UserProfile {
     @Schema(name = "id", example = "2N13-U", description = "Идентификатор пользователя.")
     private String id;
 
-    @Schema(name = "id", example = "Александр", description = "Имя.")
+    @Schema(name = "first_name", example = "Александр", description = "Имя.")
     @JsonProperty("first_name")
     private String firstName;
 

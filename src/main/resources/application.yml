@@ -12,5 +12,8 @@ spring:
     idle-timeout: 60000
   jackson:
     date-format: 'yyyy-MM-dd'
+  liquibase:
+    enabled: true
+    change-log: /db/changelog/db.changelog-master.yaml
 
 
