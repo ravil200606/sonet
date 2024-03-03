@@ -72,7 +72,7 @@ public class Controller {
     @PostMapping(value = "/user/register", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest request) {
-        return ResponseEntity.ok(securityService.register(request));
+        return ResponseEntity.ok(profileService.register(request));
     }
 
     /**

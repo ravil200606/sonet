@@ -2,6 +2,9 @@ package ars.otus.sonet.repository;
 
 import ars.otus.sonet.model.entity.UserProfile;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
@@ -45,5 +48,51 @@ public class ProfileRepository extends BaseRepository {
                                 .build())
                         : Optional.empty()
         );
+    }
+
+    private static final String SQL_INSERT = """
+            INSERT INTO USER_PROFILE(
+             SONET_USER_ID,
+             FIRST_NAME,
+             SECOND_NAME,
+             BIRTH_DATE,
+             BIOGRAPHY,
+             CITY
+            )
+            VALUES(
+             :sonetUserId,
+             :firstName,
+             :secondName,
+             :birthDate,
+             :biography,
+             :city
+            )
+            """;
+
+    /**
+     * Создание новой записи в таблице USER_PROFILE.
+     *
+     * @param profile модель для нового профиля.
+     * @return ключ новой записи.
+     */
+    public Integer createProfile(UserProfile profile) {
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        getNamedParameterJdbcTemplate().update(
+                SQL_INSERT,
+                new MapSqlParameterSource("sonetUserId", profile.getId())
+                        .addValue("firstName", profile.getFirstName())
+                        .addValue("secondName", profile.getSecondName())
+                        .addValue("birthDate", profile.getBirthDate())
+                        .addValue("biography", profile.getBiography())
+                        .addValue("city", profile.getCity()),
+                keyHolder,
+                new String[]{"id"}
+        );
+        Map<String, Object> keys = keyHolder.getKeys();
+        if (keys != null) {
+            return keyHolder.getKey().intValue();
+        } else {
+            return null;
+        }
     }
 }

@@ -19,7 +19,7 @@ import java.time.LocalDate;
 public class RegisterRequest {
 
     @Schema(name = "first_name", example = "Александр", description = "Имя пользователя.")
-    @JsonProperty(value = "first_name")
+    @JsonProperty(value = "first_name", required = true)
     private String firstName;
 
     @Schema(name = "second_name", example = "Иванов", description = "Фамилия.")
@@ -40,6 +40,6 @@ public class RegisterRequest {
     private String city;
 
     @Schema(name = "password", example = "<USER_PASSWORD>.", description = "Секретная строка.")
-    @JsonProperty(value = "password")
+    @JsonProperty(value = "password", required = true)
     private String password;
 }

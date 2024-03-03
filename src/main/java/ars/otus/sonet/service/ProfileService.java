@@ -1,6 +1,8 @@
 package ars.otus.sonet.service;
 
 import ars.otus.sonet.exception.SonetException;
+import ars.otus.sonet.model.dto.RegisterRequest;
+import ars.otus.sonet.model.dto.RegisterResponse;
 import ars.otus.sonet.model.dto.UserProfile;
 
 /**
@@ -15,4 +17,13 @@ public interface ProfileService {
      * @throws SonetException в случае ошибки.
      */
     UserProfile getProfileById(String id) throws SonetException;
+
+    /**
+     * Регистрация нового пользователя.
+     *
+     * @param request запрос на регистрацию.
+     * @return идентификатор созданного пользователя.
+     * @throws SonetException в случае ошибки.
+     */
+    RegisterResponse register(RegisterRequest request) throws SonetException;
 }

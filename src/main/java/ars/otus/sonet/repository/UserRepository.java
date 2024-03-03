@@ -2,6 +2,9 @@ package ars.otus.sonet.repository;
 
 import ars.otus.sonet.model.entity.UserEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
@@ -38,5 +41,31 @@ public class UserRepository extends BaseRepository {
                                 .password(rs.getString("PASSWORD"))
                                 .build()) : Optional.empty()
         );
+    }
+
+    private static final String SQL_INSERT = "INSERT INTO SONET_USER(USER_ID, PASSWORD) VALUES (:userId, :password)";
+
+    /**
+     * Создание новой записи в таблице SONET_USER.
+     *
+     * @param userId   идентификатор пользователя.
+     * @param password пароль.
+     * @return ключ новой записи.
+     */
+    public Integer createUser(String userId, String password) {
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        getNamedParameterJdbcTemplate().update(
+                SQL_INSERT,
+                new MapSqlParameterSource("userId", userId)
+                        .addValue("password", password),
+                keyHolder,
+                new String[] { "id" }
+        );
+
+        if (keyHolder.getKey() != null) {
+            return keyHolder.getKey().intValue();
+        } else {
+            return null;
+        }
     }
 }
