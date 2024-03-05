@@ -34,6 +34,7 @@ public class SecurityUtils {
 
     /**
      * Генерация идентификатора пользователя.
+     *
      * @return случайный идентификатор.
      */
     public static String generateUserId() {

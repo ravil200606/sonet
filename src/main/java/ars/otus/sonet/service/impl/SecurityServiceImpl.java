@@ -7,8 +7,11 @@ import ars.otus.sonet.repository.UserRepository;
 import ars.otus.sonet.service.SecurityService;
 import ars.otus.sonet.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
+import static ars.otus.sonet.configuration.filter.JwtAuthenticationFilter.BEARER_TOKEN_PREFIX;
 import static ars.otus.sonet.model.enums.ErrorCodes.BAD_CREDENTIALS;
 import static ars.otus.sonet.model.enums.ErrorCodes.NOT_FOUND;
 
@@ -20,7 +23,8 @@ import static ars.otus.sonet.model.enums.ErrorCodes.NOT_FOUND;
 public class SecurityServiceImpl implements SecurityService {
 
     private final UserRepository userRepository;
-
+    private final AuthenticationManager authenticationManager;
+    private final SonetJwtService jwtService;
     /**
      * Аутентификация пользователя.
      *
@@ -30,10 +34,13 @@ public class SecurityServiceImpl implements SecurityService {
      */
     @Override
     public AuthenticationToken authenticate(AuthenticationRequest request) throws SonetException {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getId(),
+                request.getPassword()));
         var user = userRepository.getUserByUserId(request.getId())
                 .orElseThrow(() -> new SonetException("Пользователь не найден", NOT_FOUND));
         if (SecurityUtils.matches(request.getPassword(), user.getPassword())) {
-            return new AuthenticationToken("TOKEN");
+            var jwt = jwtService.generateToken(user);
+            return new AuthenticationToken(BEARER_TOKEN_PREFIX+jwt);
         } else {
             throw new SonetException("Не верный пароль.", BAD_CREDENTIALS);
         }

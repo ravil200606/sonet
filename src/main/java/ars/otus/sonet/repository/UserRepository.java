@@ -59,7 +59,7 @@ public class UserRepository extends BaseRepository {
                 new MapSqlParameterSource("userId", userId)
                         .addValue("password", password),
                 keyHolder,
-                new String[] { "id" }
+                new String[]{"id"}
         );
 
         if (keyHolder.getKey() != null) {
