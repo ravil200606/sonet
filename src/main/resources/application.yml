@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: 'jdbc:postgresql://localhost:5432/sonet'
-    username: 'developer'
-    password: '212-201-590'
+    username: 'compose-postgres'
+    password: 'compose-postgres'
   hikari:
     auto-commit: true
     leak-detection-threshold: 60000

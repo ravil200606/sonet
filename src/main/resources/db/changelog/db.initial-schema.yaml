@@ -1,7 +1,7 @@
 databaseChangeLog:
   - preConditions:
       - runningAs:
-          username:  developer
+          username:  compose-postgres
   - changeSet:
       id:  1
       author:  Ravil.Abdulkhairov
