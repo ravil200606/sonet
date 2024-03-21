@@ -9,4 +9,4 @@ echo 'Сборка...'
 ./gradlew build
 cp build/libs/sonet-0.0.1-SNAPSHOT.jar docker/build/sonet-0.0.1-SNAPSHOT.jar
 echo 'Запуск контейнера...' 
-sudo docker compose up
+sudo docker compose up 
