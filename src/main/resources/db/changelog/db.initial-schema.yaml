@@ -71,3 +71,19 @@ databaseChangeLog:
             referencedTableName: SONET_USER
             referencedTableSchemaName: public
             validate: true
+  - changeSet:
+      id: 3
+      author: Ravil.Abdulkhairov
+      changes:
+        - sql:
+            sql: CREATE EXTENSION pg_trgm
+  - changeSet:
+      id: 4
+      author: Ravil.Abdulkhairov
+      changes:
+        - sql:
+            sql: CREATE EXTENSION btree_gin
+        - sql:
+            sql: create index second_name_idx on user_profile using gin ( second_name gin_trgm_ops)
+        - sql:
+            sql: create index first_name_idx on user_profile using gin ( first_name gin_trgm_ops)
