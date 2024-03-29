@@ -5,6 +5,8 @@ import ars.otus.sonet.model.dto.RegisterRequest;
 import ars.otus.sonet.model.dto.RegisterResponse;
 import ars.otus.sonet.model.dto.UserProfile;
 
+import java.util.List;
+
 /**
  * Интерфейс описывает методы управления профилем.
  */
@@ -26,4 +28,13 @@ public interface ProfileService {
      * @throws SonetException в случае ошибки.
      */
     RegisterResponse register(RegisterRequest request) throws SonetException;
+
+    /**
+     * Поиск списка пользователей по имени и фамилии.
+     *
+     * @param firstName  имя (или часть).
+     * @param secondName фамилия (или часть).
+     * @return список профилей найденых по запросу.
+     */
+    List<UserProfile> search(String firstName, String secondName);
 }

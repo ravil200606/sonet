@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static ars.otus.sonet.model.enums.ErrorCodes.DEFAULT_ERROR_CODE;
 import static ars.otus.sonet.model.enums.ErrorCodes.NOT_FOUND;
 import static ars.otus.sonet.util.SecurityUtils.encodePassword;
@@ -80,5 +82,28 @@ public class ProfileServiceImpl implements ProfileService {
                 DEFAULT_ERROR_CODE));
         log.debug("Новая запись в USER_PROFILE c Id {}.", newProfileId);
         return new RegisterResponse(userId);
+    }
+
+    /**
+     * Поиск списка пользователей по имени и фамилии.
+     *
+     * @param firstName  имя (или часть).
+     * @param secondName фамилия (или часть).
+     * @return список профилей найденых по запросу.
+     */
+    @Override
+    public List<UserProfile> search(String firstName, String secondName) {
+        return repository.searchByNameAndSurname(firstName, secondName)
+                .stream().map(
+                        value -> UserProfile
+                                .builder()
+                                .id(value.getUserId())
+                                .firstName(value.getFirstName())
+                                .secondName(value.getSecondName())
+                                .birthdate(value.getBirthDate())
+                                .biography(value.getBiography())
+                                .city(value.getCity())
+                                .build())
+                .toList();
     }
 }

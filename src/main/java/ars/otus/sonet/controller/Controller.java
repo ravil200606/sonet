@@ -22,7 +22,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -42,7 +45,7 @@ public class Controller {
      * Авторизация.
      *
      * @param request Запрос авторизации {@link AuthenticationRequest}.
-     * @return
+     * @return ответ о результате аутентификации {@link ResponseEntity<AuthenticationToken>}.
      */
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Успешная аутентификация.",
@@ -64,7 +67,7 @@ public class Controller {
      * Регистрация.
      *
      * @param request Запрос регистрации {@link RegisterRequest}.
-     * @return
+     * @return ответ о результате регистрации {@link ResponseEntity<RegisterResponse>}.
      */
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Успешная регистрация.",
@@ -82,7 +85,7 @@ public class Controller {
      * Получение анкеты пользователя.
      *
      * @param id Запрос анкеты пользователя параметром.
-     * @return
+     * @return анкета пользователя, если найдена.
      */
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Успешное получение анкеты пользователя.",
@@ -96,5 +99,26 @@ public class Controller {
             @Parameter(description = "Идентификатор пользователя")
             @PathVariable String id) {
         return ResponseEntity.ok(profileService.getProfileById(id));
+    }
+
+    /**
+     * Поиск пользователей по имени и фамилии.
+     *
+     * @param firstName  Имя или часть имени.
+     * @param secondName Фамилия или часть фамилии
+     * @return список профилей найденый по запросу.
+     */
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Успешное получение списка анкет пользователей.",
+                    content = @Content(schema = @Schema(implementation = UserProfile.class)))
+    })
+    @Operation(summary = "Получение списка анкет пользователей по имени и фамилии.")
+    @GetMapping(value = "/user/search", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<UserProfile>> searchByNameAndSurname(
+            @Parameter(description = "Имя или часть имени")
+            @RequestParam(name = "first_name") String firstName,
+            @Parameter(description = "Фамилия или часть фамилии")
+            @RequestParam(name = "second_name") String secondName) {
+        return ResponseEntity.ok(profileService.search(firstName, secondName));
     }
 }

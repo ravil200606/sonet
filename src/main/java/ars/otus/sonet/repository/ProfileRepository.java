@@ -1,5 +1,6 @@
 package ars.otus.sonet.repository;
 
+import ars.otus.sonet.exception.SonetException;
 import ars.otus.sonet.model.entity.UserProfile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -7,6 +8,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -88,11 +90,36 @@ public class ProfileRepository extends BaseRepository {
                 keyHolder,
                 new String[]{"id"}
         );
-        Map<String, Object> keys = keyHolder.getKeys();
-        if (keys != null) {
+        if (keyHolder.getKey() != null) {
             return keyHolder.getKey().intValue();
         } else {
-            return null;
+            throw new SonetException("Ошибка при получении ключаа новой записи USER_PROFILE");
         }
+    }
+
+    private static final String SQL_SEARCH = """
+            SELECT 
+            (SELECT USER_ID FROM SONET_USER WHERE ID = P.SONET_USER_ID) AS USER_ID, 
+            P.FIRST_NAME, 
+            P.SECOND_NAME, 
+            P.BIRTH_DATE,
+            P.BIOGRAPHY,
+            P.CITY
+            FROM USER_PROFILE P 
+            WHERE P.FIRST_NAME LIKE (:firstName) AND P.SECOND_NAME LIKE (:secondName) ORDER BY P.ID
+            """;
+
+    public List<UserProfile> searchByNameAndSurname(String firstName, String secondName) {
+        return getNamedParameterJdbcTemplate().query(SQL_SEARCH,
+                new MapSqlParameterSource("firstName", firstName + "%")
+                        .addValue("secondName", secondName + "%"),
+                (rs, rowNum) -> UserProfile.builder()
+                        .userId(rs.getString("USER_ID"))
+                        .firstName(rs.getString("FIRST_NAME"))
+                        .secondName(rs.getString("SECOND_NAME"))
+                        .birthDate(rs.getDate("BIRTH_DATE").toLocalDate())
+                        .biography(rs.getString("BIOGRAPHY"))
+                        .city(rs.getString("CITY"))
+                        .build());
     }
 }
