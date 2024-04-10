@@ -76,14 +76,14 @@ databaseChangeLog:
       author: Ravil.Abdulkhairov
       changes:
         - sql:
-            sql: CREATE EXTENSION pg_trgm
+            sql: CREATE EXTENSION IF NOT EXISTS pg_trgm
   - changeSet:
       id: 4
       author: Ravil.Abdulkhairov
       changes:
         - sql:
-            sql: CREATE EXTENSION btree_gin
+            sql: CREATE EXTENSION IF NOT EXISTS btree_gin
         - sql:
-            sql: create index second_name_idx on user_profile using gin ( second_name gin_trgm_ops)
+            sql: create index if not exists second_name_idx on user_profile using gin ( second_name gin_trgm_ops)
         - sql:
-            sql: create index first_name_idx on user_profile using gin ( first_name gin_trgm_ops)
+            sql: create index if not exists first_name_idx on user_profile using gin ( first_name gin_trgm_ops)
