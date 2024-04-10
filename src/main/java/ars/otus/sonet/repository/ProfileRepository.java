@@ -2,7 +2,6 @@ package ars.otus.sonet.repository;
 
 import ars.otus.sonet.exception.SonetException;
 import ars.otus.sonet.model.entity.UserProfile;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -17,9 +16,6 @@ import java.util.Optional;
  */
 @Repository
 public class ProfileRepository extends BaseRepository {
-    public ProfileRepository(JdbcTemplate serviceJdbcTemplate) {
-        super(serviceJdbcTemplate);
-    }
 
     private static final String SQL_FIND_PROFILE_BY_USER_ID = """
             SELECT UP.ID, UP.FIRST_NAME, UP.SECOND_NAME, UP.BIRTH_DATE, UP.BIOGRAPHY, UP.CITY
@@ -35,7 +31,7 @@ public class ProfileRepository extends BaseRepository {
      * @return профиль, если найден {@link Optional<UserProfile>}.
      */
     public Optional<UserProfile> getProfileByUserId(String userId) {
-        return getNamedParameterJdbcTemplate().query(
+        return getSlaveNamedParameterJdbcTemplate().query(
                 SQL_FIND_PROFILE_BY_USER_ID,
                 Map.of("userId", userId),
                 rs -> rs.next() ? Optional.of(
@@ -79,7 +75,7 @@ public class ProfileRepository extends BaseRepository {
      */
     public Integer createProfile(UserProfile profile) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        getNamedParameterJdbcTemplate().update(
+        getMasterNamedParameterJdbcTemplate().update(
                 SQL_INSERT,
                 new MapSqlParameterSource("sonetUserId", profile.getId())
                         .addValue("firstName", profile.getFirstName())
@@ -110,7 +106,7 @@ public class ProfileRepository extends BaseRepository {
             """;
 
     public List<UserProfile> searchByNameAndSurname(String firstName, String secondName) {
-        return getNamedParameterJdbcTemplate().query(SQL_SEARCH,
+        return getSlaveNamedParameterJdbcTemplate().query(SQL_SEARCH,
                 new MapSqlParameterSource("firstName", firstName + "%")
                         .addValue("secondName", secondName + "%"),
                 (rs, rowNum) -> UserProfile.builder()

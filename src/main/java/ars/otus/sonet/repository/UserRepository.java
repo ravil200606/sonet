@@ -1,7 +1,6 @@
 package ars.otus.sonet.repository;
 
 import ars.otus.sonet.model.entity.UserEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -15,10 +14,6 @@ import java.util.Optional;
  */
 @Repository
 public class UserRepository extends BaseRepository {
-    public UserRepository(JdbcTemplate serviceJdbcTemplate) {
-        super(serviceJdbcTemplate);
-    }
-
     private static final String SQL_FIND_USER_BY_USER_ID = """
             SELECT ID, USER_ID, PASSWORD FROM SONET_USER WHERE USER_ID = :userId 
             """;
@@ -30,7 +25,7 @@ public class UserRepository extends BaseRepository {
      * @return пользователь, если найден {@link Optional<UserEntity>}.
      */
     public Optional<UserEntity> getUserByUserId(String userId) {
-        return getNamedParameterJdbcTemplate().query(
+        return getMasterNamedParameterJdbcTemplate().query(
                 SQL_FIND_USER_BY_USER_ID,
                 Map.of("userId", userId),
                 rs -> rs.next() ? Optional.of(
@@ -54,7 +49,7 @@ public class UserRepository extends BaseRepository {
      */
     public Integer createUser(String userId, String password) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        getNamedParameterJdbcTemplate().update(
+        getMasterNamedParameterJdbcTemplate().update(
                 SQL_INSERT,
                 new MapSqlParameterSource("userId", userId)
                         .addValue("password", password),

@@ -1,8 +1,15 @@
 spring:
   datasource:
-    url: 'jdbc:postgresql://localhost:5432/sonet'
-    username: 'compose-postgres'
-    password: 'compose-postgres'
+    master:
+      url: 'jdbc:postgresql://localhost:5432/sonet'
+      username: 'compose-postgres'
+      password: 'compose-postgres'
+      liquibase:
+        change-log: classpath:/db/changelog/db.changelog-master.yaml
+    slave:
+      url: 'jdbc:postgresql://192.168.1.114:5432/sonet'
+      username: 'compose-postgres'
+      password: 'compose-postgres'
   hikari:
     auto-commit: true
     leak-detection-threshold: 60000
@@ -13,5 +20,5 @@ spring:
   jackson:
     date-format: 'yyyy-MM-dd'
   liquibase:
-    enabled: true
+    enabled: false
     change-log: /db/changelog/db.changelog-master.yaml
