@@ -146,6 +146,8 @@ public class Controller {
             @RequestParam(name = "offset", defaultValue = "0") Integer offset,
             @Parameter(description = "Лимит, ограничивающий кол-во возвращенных сущностей.")
             @RequestParam(name = "limit", defaultValue = "10") Integer limit) {
+        log.info("Будет выполнен запрос постов c параметрами {} {} {}.",
+                getAuthUserId(), offset, limit);
         return ResponseEntity.ok(postService.getFreshFriendPosts(getAuthUserId(), offset, limit));
     }
 }

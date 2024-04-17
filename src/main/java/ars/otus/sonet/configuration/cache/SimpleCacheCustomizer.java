@@ -15,7 +15,7 @@ public class SimpleCacheCustomizer implements CacheManagerCustomizer<ConcurrentM
         cacheManager.setCacheNames(asList("posts"));
     }
 
-    @Scheduled(cron = "0,30 * * * * ?")
+    @Scheduled(fixedRate = 30000)
     @CacheEvict(value = "posts", allEntries = true)
     public void deleteCache() {
     }
