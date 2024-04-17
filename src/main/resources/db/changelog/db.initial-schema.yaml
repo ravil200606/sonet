@@ -87,3 +87,102 @@ databaseChangeLog:
             sql: create index if not exists second_name_idx on user_profile using gin ( second_name gin_trgm_ops)
         - sql:
             sql: create index if not exists first_name_idx on user_profile using gin ( first_name gin_trgm_ops)
+  - changeSet:
+      id: 5
+      author: Ravil.Abdulkhairov
+      changes:
+        - createTable:
+            tableName: USER_FRIENDS
+            columns:
+              - column:
+                  name: ID
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: USER_ID
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: FRIEND_ID
+                  type: int
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseColumnNames: USER_ID
+            baseTableName: USER_FRIENDS
+            baseTableSchemaName: public
+            constraintName: fk_friends_user_id
+            deferrable: true
+            initiallyDeferred: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+            referencedColumnNames: ID
+            referencedTableName: SONET_USER
+            referencedTableSchemaName: public
+            validate: true
+        - addForeignKeyConstraint:
+            baseColumnNames: FRIEND_ID
+            baseTableName: USER_FRIENDS
+            baseTableSchemaName: public
+            constraintName: fk_friends_friend_id
+            deferrable: true
+            initiallyDeferred: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+            referencedColumnNames: ID
+            referencedTableName: SONET_USER
+            referencedTableSchemaName: public
+            validate: true
+        - addUniqueConstraint:
+            columnNames: USER_ID, FRIEND_ID
+            constraintName: uq_user_friend
+            deferrable: true
+            tableName: USER_FRIENDS
+            validate: true
+  - changeSet:
+      id: 6
+      author: Ravil.Abdulkhairov
+      changes:
+        - createTable:
+            tableName: POSTS
+            columns:
+              - column:
+                  name: ID
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: USER_ID
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: CONTENT
+                  type: TEXT
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseColumnNames: USER_ID
+            baseTableName: POSTS
+            baseTableSchemaName: public
+            constraintName: fk_friends_user_id
+            deferrable: true
+            initiallyDeferred: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+            referencedColumnNames: ID
+            referencedTableName: SONET_USER
+            referencedTableSchemaName: public
+            validate: true
+  - changeSet:
+      id: 7
+      author: Ravil.Abdulkhairov
+      changes:
+        - sql:
+            sql: create index if not exists posts_author_idx on posts(user_id)

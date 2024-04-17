@@ -3,9 +3,11 @@ package ars.otus.sonet.controller;
 import ars.otus.sonet.model.dto.AuthenticationRequest;
 import ars.otus.sonet.model.dto.AuthenticationToken;
 import ars.otus.sonet.model.dto.ErrorResponse;
+import ars.otus.sonet.model.dto.Post;
 import ars.otus.sonet.model.dto.RegisterRequest;
 import ars.otus.sonet.model.dto.RegisterResponse;
 import ars.otus.sonet.model.dto.UserProfile;
+import ars.otus.sonet.service.PostService;
 import ars.otus.sonet.service.ProfileService;
 import ars.otus.sonet.service.SecurityService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,6 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static ars.otus.sonet.util.SecurityUtils.getAuthUserId;
+
 @Slf4j
 @RestController
 @ApiResponses(value = {
@@ -39,6 +43,7 @@ import java.util.List;
 public class Controller {
 
     private final SecurityService securityService;
+    private final PostService postService;
     private final ProfileService profileService;
 
     /**
@@ -98,6 +103,7 @@ public class Controller {
     public ResponseEntity<UserProfile> getUserProfile(
             @Parameter(description = "Идентификатор пользователя")
             @PathVariable String id) {
+        log.info("Вызов метода пользователем Id: {}.", getAuthUserId());
         return ResponseEntity.ok(profileService.getProfileById(id));
     }
 
@@ -120,5 +126,26 @@ public class Controller {
             @Parameter(description = "Фамилия или часть фамилии")
             @RequestParam(name = "second_name") String secondName) {
         return ResponseEntity.ok(profileService.search(firstName, secondName));
+    }
+
+    /**
+     * Возвращает посты друзей.
+     *
+     * @param offset Оффсет с которого начинать выдачу.
+     * @param limit  Лимит, ограничивающий кол-во возвращенных сущностей.
+     * @return список профилей найденый по запросу.
+     */
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Успешно получены посты друзей.",
+                    content = @Content(schema = @Schema(implementation = UserProfile.class)))
+    })
+    @Operation(summary = "Получение постов друзей.")
+    @GetMapping(value = "/post/feed", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Post>> feed(
+            @Parameter(description = "Оффсет с которого начинать выдачу.")
+            @RequestParam(name = "offset", defaultValue = "0") Integer offset,
+            @Parameter(description = "Лимит, ограничивающий кол-во возвращенных сущностей.")
+            @RequestParam(name = "limit", defaultValue = "10") Integer limit) {
+        return ResponseEntity.ok(postService.getFreshFriendPosts(getAuthUserId(), offset, limit));
     }
 }
