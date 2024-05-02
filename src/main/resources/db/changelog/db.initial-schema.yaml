@@ -186,3 +186,63 @@ databaseChangeLog:
       changes:
         - sql:
             sql: create index if not exists posts_author_idx on posts(user_id)
+  - changeSet:
+      id: 8
+      author: Ravil.Abdulkhairov
+      changes:
+        - createTable:
+            tableName: DIALOGUE
+            columns:
+              - column:
+                  name: ID
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: FROM_ID
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: TO_ID
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: DIALOGUE_DATE
+                  type: timestamptz
+                  constraints:
+                    nullable: false
+              - column:
+                  name: CONTENT
+                  type: TEXT
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseColumnNames: FROM_ID
+            baseTableName: DIALOGUE
+            baseTableSchemaName: public
+            constraintName: fk_dialogue_from_id
+            deferrable: true
+            initiallyDeferred: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+            referencedColumnNames: ID
+            referencedTableName: SONET_USER
+            referencedTableSchemaName: public
+            validate: true
+        - addForeignKeyConstraint:
+            baseColumnNames: TO_ID
+            baseTableName: DIALOGUE
+            baseTableSchemaName: public
+            constraintName: fk_dialogue_to_id
+            deferrable: true
+            initiallyDeferred: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+            referencedColumnNames: ID
+            referencedTableName: SONET_USER
+            referencedTableSchemaName: public
+            validate: true
